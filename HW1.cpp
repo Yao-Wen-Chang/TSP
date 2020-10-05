@@ -2,18 +2,43 @@
 #include<fstream>
 #include<vector>
 #include<string>
+#include<cmath>
+#include<algorithm>
 using namespace std;
+
 vector<string> openFile();
 vector<int> splitString(string, char);
+void TSP(vector<vector<int>>, vector<int>, int, int, int, vector<int>);
+int calculateDistance(int, int, int, int);
 
+int minVal = 30000;
+vector<int> minPath;
+vector<int> aa;
 int main() {
     vector<string>data = openFile();
+    
     vector<vector<int>> intDataMatrix;
     for(int i = 0; i < data.size(); i++) {
-        
         intDataMatrix.push_back(splitString(data[i], ' '));
     }
-   
+    
+    vector<int> notYetPass;
+    
+    for(int i = 1; i < data.size(); i++) 
+        notYetPass.push_back(i);
+         
+    vector<int> path;
+    path.push_back(0);
+    
+    TSP(intDataMatrix, notYetPass, 0, intDataMatrix[0][1], intDataMatrix[0][2], path);
+    
+    for(int i = 0; i < minPath.size(); i++) {
+        cout << minPath[i]+1 << "->";
+    }
+    cout << endl << minVal << endl;
+    sort(aa.begin(), aa.end());
+    cout << aa[0];
+    cout << aa[aa.size()];
     return 0;
 }
 
@@ -34,23 +59,68 @@ vector<string> openFile() {
     
     return data;
 }
+
 vector<int> splitString(string strToSplit, char splitChar) {
     vector<int> splitInt;
     string tmpS;
     int tmpI = 0;
   
-    for(int i = 0; i <= strToSplit.length(); i++) {
-        cout << i << "index" << endl;      
-        if(strToSplit[i] == '\n' || strToSplit[i] == splitChar) {
-            
+    for(int i = 0; i < strToSplit.length(); i++) {
+          
+        if(strToSplit[i] == splitChar) {
             tmpS = strToSplit.substr(tmpI, i-tmpI);
-            cout << tmpS << "kkk" << endl;
-            //splitInt.push_back(stoi(tmpS, nullptr));
             
+            splitInt.push_back(stoi(tmpS, nullptr));
             tmpI = i+1;
         }
+	    else if(i == strToSplit.length()-1) {
+	        tmpS = strToSplit.substr(tmpI, i-tmpI+1);
+	        splitInt.push_back(stoi(tmpS, nullptr));
+	        
+	    }
+
     
     }
     return splitInt;
 
+}
+
+void TSP(vector<vector<int>> intDataMatrix, vector<int> notYetPass, int sum, int prevX, int prevY, vector<int>path) {
+    //cout << sum << ' ' << prevX << ' ' << prevY << ' ' << endl;
+    if(notYetPass.size() == 0) {   
+        sum += calculateDistance(prevX, prevY, intDataMatrix[0][1], intDataMatrix[0][2]);
+        aa.push_back(sum);
+        path.push_back(0);
+        if(sum < minVal) {
+            minVal = sum;            
+            minPath = path;
+        }    
+        
+    }
+    else {
+        for(int i = 0; i < notYetPass.size(); i++) {
+            int distance = calculateDistance(prevX, prevY, intDataMatrix[notYetPass[i]][1], intDataMatrix[notYetPass[i]][2]);
+            path.push_back(notYetPass[i]);
+            int tmp = notYetPass[i];
+            vector<int>::iterator iter = find(notYetPass.begin(), notYetPass.end(), notYetPass[i]);            
+            notYetPass.erase(iter);
+            
+            TSP(intDataMatrix, notYetPass, sum+distance, intDataMatrix[tmp][1], intDataMatrix[tmp][2], path);
+            /* retrieve the value */
+            notYetPass.push_back(tmp);
+            path.pop_back();
+            
+            
+        }
+    }    
+    
+    
+    
+
+
+
+}
+
+int calculateDistance(int startX, int startY, int endX, int endY) {
+    return sqrt(pow(startX-endX, 2)+pow(startY-endY, 2));
 }
