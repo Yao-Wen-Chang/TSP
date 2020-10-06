@@ -4,6 +4,7 @@
 #include<string>
 #include<cmath>
 #include<algorithm>
+#include<ctime>
 using namespace std;
 
 vector<string> openFile();
@@ -13,7 +14,7 @@ int calculateDistance(int, int, int, int);
 
 int minVal = 30000;
 vector<int> minPath;
-vector<int> aa;
+
 int main() {
     vector<string>data = openFile();
     
@@ -29,16 +30,14 @@ int main() {
          
     vector<int> path;
     path.push_back(0);
-    
+    std::clock_t c_start = std::clock();
     TSP(intDataMatrix, notYetPass, 0, intDataMatrix[0][1], intDataMatrix[0][2], path);
-    
-    for(int i = 0; i < minPath.size(); i++) {
+    std::clock_t c_end = std::clock();
+    for(int i = 0; i < minPath.size(); i++) { // the path 
         cout << minPath[i]+1 << "->";
     }
     cout << endl << minVal << endl;
-    sort(aa.begin(), aa.end());
-    cout << aa[0];
-    cout << aa[aa.size()];
+    cout << "consuming time: " << (c_end-c_start)/ CLOCKS_PER_SEC << " /s" << endl;
     return 0;
 }
 
@@ -86,10 +85,8 @@ vector<int> splitString(string strToSplit, char splitChar) {
 }
 
 void TSP(vector<vector<int>> intDataMatrix, vector<int> notYetPass, int sum, int prevX, int prevY, vector<int>path) {
-    //cout << sum << ' ' << prevX << ' ' << prevY << ' ' << endl;
     if(notYetPass.size() == 0) {   
         sum += calculateDistance(prevX, prevY, intDataMatrix[0][1], intDataMatrix[0][2]);
-        aa.push_back(sum);
         path.push_back(0);
         if(sum < minVal) {
             minVal = sum;            
