@@ -5,14 +5,15 @@
 #include<cmath>
 #include<algorithm>
 #include<ctime>
+#include "gnuplot-iostream.h"
 using namespace std;
 
 vector<string> openFile();
 vector<int> splitString(string, char);
-void TSP(vector<vector<int>>, vector<int>, int, int, int, vector<int>);
-int calculateDistance(int, int, int, int);
+void TSP(vector<vector<int>>, vector<int>, double, int, int, vector<int>);
+double calculateDistance(int, int, int, int);
 
-int minVal = 30000;
+double minVal = 30000;
 vector<int> minPath;
 
 int main() {
@@ -84,7 +85,7 @@ vector<int> splitString(string strToSplit, char splitChar) {
 
 }
 
-void TSP(vector<vector<int>> intDataMatrix, vector<int> notYetPass, int sum, int prevX, int prevY, vector<int>path) {
+void TSP(vector<vector<int>> intDataMatrix, vector<int> notYetPass, double sum, int prevX, int prevY, vector<int>path) {
     if(notYetPass.size() == 0) {   
         sum += calculateDistance(prevX, prevY, intDataMatrix[0][1], intDataMatrix[0][2]);
         path.push_back(0);
@@ -96,7 +97,7 @@ void TSP(vector<vector<int>> intDataMatrix, vector<int> notYetPass, int sum, int
     }
     else {
         for(int i = 0; i < notYetPass.size(); i++) {
-            int distance = calculateDistance(prevX, prevY, intDataMatrix[notYetPass[i]][1], intDataMatrix[notYetPass[i]][2]);
+            double distance = calculateDistance(prevX, prevY, intDataMatrix[notYetPass[i]][1], intDataMatrix[notYetPass[i]][2]);
             path.push_back(notYetPass[i]);
             int tmp = notYetPass[i];
             vector<int>::iterator iter = find(notYetPass.begin(), notYetPass.end(), notYetPass[i]);            
@@ -110,14 +111,8 @@ void TSP(vector<vector<int>> intDataMatrix, vector<int> notYetPass, int sum, int
             
         }
     }    
-    
-    
-    
-
-
-
 }
 
-int calculateDistance(int startX, int startY, int endX, int endY) {
-    return sqrt(pow(startX-endX, 2)+pow(startY-endY, 2));
+double calculateDistance(int startX, int startY, int endX, int endY) {
+    return double(sqrt(pow(startX-endX, 2)+pow(startY-endY, 2)));
 }
